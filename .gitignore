@@ -1,2 +1,6 @@
 codealike.json
 venv/
+venv-script-command.txt
+.vscode/
+createdPickles/
+__pycache__/
