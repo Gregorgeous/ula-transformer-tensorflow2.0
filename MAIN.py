@@ -178,6 +178,6 @@ def translate(sentence, plot=''):
     print('Predicted translation: {}'.format(predicted_sentence))
 
     if plot:
-        plot_attention_weights(attention_weights, sentence, result, plot)
+        plot_attention_weights(attention_weights, sentence, result, plot,text_tokenizer,summaries_tokenizer)
 
     

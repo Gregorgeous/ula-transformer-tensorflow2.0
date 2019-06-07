@@ -1,12 +1,10 @@
 import matplotlib as plt
 import tensorflow as tf
 
-
-# TODO: figure out a neat way to pass the variable state for what's now the "tokenizer_pt" and "tokenizer_en"
-def plot_attention_weights(attention, sentence, result, layer):
+def plot_attention_weights(attention, sentence, result, layer, text_tokenizer, summaries_tokenizer):
   fig = plt.figure(figsize=(16, 8))
   
-  sentence = tokenizer_pt.encode(sentence)
+  sentence = text_tokenizer.encode(sentence)
   
   attention = tf.squeeze(attention[layer], axis=0)
   
@@ -24,11 +22,11 @@ def plot_attention_weights(attention, sentence, result, layer):
     ax.set_ylim(len(result)-1.5, -0.5)
         
     ax.set_xticklabels(
-        ['<start>']+[tokenizer_pt.decode([i]) for i in sentence]+['<end>'], 
+        ['<start>']+[text_tokenizer.decode([i]) for i in sentence]+['<end>'], 
         fontdict=fontdict, rotation=90)
     
-    ax.set_yticklabels([tokenizer_en.decode([i]) for i in result 
-                        if i < tokenizer_en.vocab_size], 
+    ax.set_yticklabels([summaries_tokenizer.decode([i]) for i in result 
+                        if i < summaries_tokenizer.vocab_size], 
                        fontdict=fontdict)
     
     ax.set_xlabel('Head {}'.format(head+1))
