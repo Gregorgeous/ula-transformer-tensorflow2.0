@@ -24,18 +24,18 @@ target_summaries = unpickle('allPreprocessedSummaries')
 input_texts = unpickle('allPreprocessedTexts')
 start = time.time()
 print("BEGUN: preprocessing pipeline on inputs")
-text_tokenizer, all_tokenized_texts, texts_max_length = dataset_preprocessing_pipeline(input_texts,include_bos_eos_tokens=False, cutoff_index=20, text_max_allowed_len=65)
+text_tokenizer, all_tokenized_texts, texts_max_length = dataset_preprocessing_pipeline(input_texts,include_bos_eos_tokens=False, cutoff_index=100000, text_max_allowed_len=65)
 print(f"FINISHED: Time taken: {(time.time() - start):.3}s ")
 print('-----------------')
 print("BEGUN: preprocessing pipeline on summaries")
-summaries_tokenizer, all_tokenized_summaries, summaries_max_length = dataset_preprocessing_pipeline(target_summaries,include_bos_eos_tokens=False, cutoff_index=20, text_max_allowed_len=10)
+summaries_tokenizer, all_tokenized_summaries, summaries_max_length = dataset_preprocessing_pipeline(target_summaries,include_bos_eos_tokens=False, cutoff_index=100000, text_max_allowed_len=10)
 print(f"FINISHED: Time taken: {(time.time() - start):.3}s ")
 print('-----------------')
 
 
 # ================= MANUALLY RESHAPE THE DATA INTO BATCHES ================
 # (this step is needed because I decided to feed the model with the in-memory numpy array feeding instead of the "tf.data"-based approach TF team shown in the Transformer tutorial)
-BATCH_SIZE = 4
+BATCH_SIZE =10
 all_tokenized_texts = np.reshape(all_tokenized_texts,(BATCH_SIZE,-1,texts_max_length))
 all_tokenized_summaries = np.reshape(all_tokenized_summaries, (BATCH_SIZE,-1,summaries_max_length))
 
@@ -70,9 +70,9 @@ ckpt = tf.train.Checkpoint(transformer=transformer,
 ckpt_manager = tf.train.CheckpointManager(ckpt, checkpoint_path, max_to_keep=5)
 
 # if a checkpoint exists, restore the latest checkpoint.
-if ckpt_manager.latest_checkpoint:
-  ckpt.restore(ckpt_manager.latest_checkpoint)
-  print ('Latest checkpoint restored!!')
+#if ckpt_manager.latest_checkpoint:
+#  ckpt.restore(ckpt_manager.latest_checkpoint)
+#  print ('Latest checkpoint restored!!')
 
 # ================= TRAINING TIME ! ===================
 EPOCHS = 20
