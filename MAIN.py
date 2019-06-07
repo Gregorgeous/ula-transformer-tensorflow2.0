@@ -5,6 +5,12 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
+from tensorflow.python.keras.layers.normalization import LayerNormalization
+
+print("------------ TENSORFLOW VERSION and Layer normalization visibility-----------------")
+print(tf.__version__)
+print(LayerNormalization)
+
 # ====== Local code imports for Transformer ============
 from custom_loss import loss_object,loss_function,train_loss,train_accuracy
 from dynamic_learning_rate import CustomSchedule
@@ -18,17 +24,18 @@ from preprocessing_pipeline import dataset_preprocessing_pipeline
 # ====== Local code imports for my util functions ======
 from myPickleModule import unpickle
 
+
 #  ============= OUR DATASET LOADUP STEP ===================
 print("===== START OF THE DATASET SAMPLES PREPROCESSING =========== ")
 target_summaries = unpickle('allPreprocessedSummaries')
 input_texts = unpickle('allPreprocessedTexts')
 start = time.time()
 print("BEGUN: preprocessing pipeline on inputs")
-text_tokenizer, all_tokenized_texts, texts_max_length = dataset_preprocessing_pipeline(input_texts,include_bos_eos_tokens=False, cutoff_index=100000, text_max_allowed_len=65)
+text_tokenizer, all_tokenized_texts, texts_max_length = dataset_preprocessing_pipeline(input_texts,include_bos_eos_tokens=False, cutoff_index=20000, text_max_allowed_len=65)
 print(f"FINISHED: Time taken: {(time.time() - start):.3}s ")
 print('-----------------')
 print("BEGUN: preprocessing pipeline on summaries")
-summaries_tokenizer, all_tokenized_summaries, summaries_max_length = dataset_preprocessing_pipeline(target_summaries,include_bos_eos_tokens=False, cutoff_index=100000, text_max_allowed_len=10)
+summaries_tokenizer, all_tokenized_summaries, summaries_max_length = dataset_preprocessing_pipeline(target_summaries,include_bos_eos_tokens=False, cutoff_index=20000, text_max_allowed_len=10)
 print(f"FINISHED: Time taken: {(time.time() - start):.3}s ")
 print('-----------------')
 
@@ -75,7 +82,7 @@ ckpt_manager = tf.train.CheckpointManager(ckpt, checkpoint_path, max_to_keep=5)
 #  print ('Latest checkpoint restored!!')
 
 # ================= TRAINING TIME ! ===================
-EPOCHS = 20
+EPOCHS = 10
 
 @tf.function
 def train_step(inp, tar):
@@ -181,3 +188,4 @@ def translate(sentence, plot=''):
         plot_attention_weights(attention_weights, sentence, result, plot,text_tokenizer,summaries_tokenizer)
 
     
+translate("Colds are caused by viruses, which do not respond to antibiotics. Antibiotics are used to treat bacterial infections.")
