@@ -47,10 +47,10 @@ all_tokenized_texts = np.reshape(all_tokenized_texts,(BATCH_SIZE,-1,texts_max_le
 all_tokenized_summaries = np.reshape(all_tokenized_summaries, (BATCH_SIZE,-1,summaries_max_length))
 
 # ============== MODEL HYPERPARAMETERS =====================
-num_layers = 4
-d_model = 128
-dff = 512
-num_heads = 8
+num_layers = 2
+d_model = 64
+dff = 256
+num_heads = 2
 
 # To un-comment once train data properly BPE encoded
 input_vocab_size = text_tokenizer.vocab_size + 2
@@ -69,7 +69,7 @@ optimizer = tf.keras.optimizers.Adam(learning_rate, beta_1=0.9, beta_2=0.98,
 transformer = Transformer(num_layers, d_model, num_heads, dff,
                           input_vocab_size, target_vocab_size, dropout_rate)
 # ============ CHECKPOINTING ==================
-checkpoint_path = "./checkpoints/train"
+checkpoint_path = "./checkpoints/dist"
 
 ckpt = tf.train.Checkpoint(transformer=transformer,
                            optimizer=optimizer)
@@ -82,7 +82,7 @@ ckpt_manager = tf.train.CheckpointManager(ckpt, checkpoint_path, max_to_keep=5)
 #  print ('Latest checkpoint restored!!')
 
 # ================= TRAINING TIME ! ===================
-EPOCHS = 10
+EPOCHS = 500
 
 @tf.function
 def train_step(inp, tar):
@@ -182,7 +182,7 @@ def translate(sentence, plot=''):
                                                 if i < summaries_tokenizer.vocab_size])  
 
     print('Input: {}'.format(sentence))
-    print('Predicted translation: {}'.format(predicted_sentence))
+    print('Predicted translation: "{}"'.format(predicted_sentence))
 
     if plot:
         plot_attention_weights(attention_weights, sentence, result, plot,text_tokenizer,summaries_tokenizer)
