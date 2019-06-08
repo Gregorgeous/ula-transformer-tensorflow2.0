@@ -5,11 +5,10 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
-from tensorflow.python.keras.layers.normalization import LayerNormalization
-
-print("------------ TENSORFLOW VERSION and Layer normalization visibility-----------------")
+print("------------ TENSORFLOW VERSION and on what CPU/GPU it runs on: ------------ ")
 print(tf.__version__)
-print(LayerNormalization)
+from tensorflow.python.client import device_lib
+print(device_lib.list_local_devices())
 
 # ====== Local code imports for Transformer ============
 from custom_loss import loss_object,loss_function,train_loss,train_accuracy
