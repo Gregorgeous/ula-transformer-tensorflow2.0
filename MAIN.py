@@ -19,6 +19,8 @@ from plot_attention import plot_attention_weights
 # ====== Local import from my preprocessing pipeline ===
 # (which is half my code, half one from T2.0 transformer tutorial )
 from preprocessing_pipeline import dataset_preprocessing_pipeline
+# ===== local import for my own, custom Tensorflow logic === 
+from perplexity_metric import PerplexityMetric
 
 # ====== Local code imports for my util functions ======
 from myPickleModule import unpickle
@@ -81,7 +83,9 @@ ckpt_manager = tf.train.CheckpointManager(ckpt, checkpoint_path, max_to_keep=5)
 #  print ('Latest checkpoint restored!!')
 
 # ================= TRAINING TIME ! ===================
+# Initialise epochs AND my own, custom TensorFlow metric for perplexity
 EPOCHS = 500
+train_perplexity = PerplexityMetric(name='train_perplexity')
 
 @tf.function
 def train_step(inp, tar):
@@ -103,10 +107,12 @@ def train_step(inp, tar):
   
   train_loss(loss)
   train_accuracy(tar_real, predictions)
+  train_perplexity(tar_real, predictions)
 
 for epoch in range(EPOCHS):
   start = time.time()
   
+  train_perplexity.reset_states()
   train_loss.reset_states()
   train_accuracy.reset_states()
   
@@ -123,8 +129,9 @@ for epoch in range(EPOCHS):
     print ('Saving checkpoint for epoch {} at {}'.format(epoch+1,
                                                          ckpt_save_path))
     
-  print ('Epoch {} Loss {:.4f} Accuracy {:.4f}'.format(epoch + 1, 
+  print ('Epoch {}, Loss {:.4f}, Perplexity {:.4f}, Accuracy {:.4f}'.format(epoch + 1,
                                                 train_loss.result(), 
+                                                train_perplexity.result(),
                                                 train_accuracy.result()))
 
   print ('Time taken for 1 epoch: {} secs\n'.format(time.time() - start))
