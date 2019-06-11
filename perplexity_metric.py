@@ -16,14 +16,14 @@ class PerplexityMetric(tf.keras.metrics.Metric):
       self.perplexity = self.add_weight(name='tp', initializer='zeros')
 
     # @tf.function
-    def _calculate_loss(self, real, pred):
+    def _calculate_perplexity(self, real, pred):
       mask = tf.math.logical_not(tf.math.equal(real, 0))
       loss_ = self.cross_entropy(real, pred)
       mask = tf.cast(mask, dtype=loss_.dtype)
       loss_ *= mask
-      test1 = K.mean(loss_, axis=-1)
-      test2 = K.exp(test1)
-      perplexity = K.mean(test2)
+      step1 = K.mean(loss_, axis=-1)
+      step2 = K.exp(step1)
+      perplexity = K.mean(step2)
 
       return perplexity 
 
@@ -32,7 +32,7 @@ class PerplexityMetric(tf.keras.metrics.Metric):
       # TODO:FIXME: handle sample_weight ! 
       if sample_weight is not None:
           print("WARNING! Provided 'sample_weight' argument to the perplexity metric. Currently this is not handled and won't do anything differently..")
-      perplexity = self._calculate_loss(y_true, y_pred)
+      perplexity = self._calculate_perplexity(y_true, y_pred)
       self.perplexity.assign_add(perplexity)
         
     def result(self):
