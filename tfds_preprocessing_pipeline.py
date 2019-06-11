@@ -137,7 +137,7 @@ def dataset_preprocessing_pipeline(texts:list,summaries:list, cutoff_index=0, te
     texts_bpe_encodings_max_length = max_length_texts(dataset)
     summaries_bpe_encodings_max_length = max_length_summaries(dataset)
     # Step 4: Shuffle the dataset, pad all the text and summary data samples to the same length (each has it's own appropriate one provided earlier), and form it all into batches.
-    dataset = dataset.shuffle(buffer_size).padded_batch(
+    dataset = dataset.padded_batch(
     batch_size, padded_shapes=([texts_bpe_encodings_max_length], [summaries_bpe_encodings_max_length]))
     # Step 5: return all the objects we'll later need in out MAIN file. 
     return dataset,TEXT_TOKENIZER, SUMMARY_TOKENIZER,texts_bpe_encodings_max_length,summaries_bpe_encodings_max_length
